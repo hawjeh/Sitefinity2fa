@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="login">
+        <h1>Two-factor Authentication</h1>
+        @using (Html.BeginForm())
+        {
+            if (!Html.ViewData.ModelState.IsValid)
+            {
+                <p class="error">@Html.ValidationMessage("InvalidToken")</p>
+            }
+            <p><input type="password" name="token" value="" placeholder="Token" autofocus></p>
+            <p class="submit"><input type="submit" name="commit" value="Verify"></p>
+        }
+    </div>
+</div>

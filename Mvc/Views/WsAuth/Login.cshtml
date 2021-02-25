@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="login">
+        <h1>Login to manage the site</h1>
+        @using (Html.BeginForm())
+        {
+            if (!Html.ViewData.ModelState.IsValid)
+            {
+                <p class="error">@Html.ValidationMessage("InvalidCredentials")</p>
+            }
+            <p><input type="text" name="wrap_name" value="hawjeh.lee@websparks.sg" placeholder="Username" autofocus></p>
+            <p><input type="password" name="wrap_password" value="Websparks123" placeholder="Password"></p>
+            <p class="remember_me">
+                <label>
+                    <label>
+                        <input type="checkbox" name="sf_persistent" id="sf_persistent">
+                        Remember me on this computer
+                    </label>
+                </label>
+            </p>
+            <input type="hidden" id="isFormRequest" name="is_form" value="true" />
+            <p class="submit"><input type="submit" name="commit" value="Login"></p>
+        }
+    </div>
+</div>

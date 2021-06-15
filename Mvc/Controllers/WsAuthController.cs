@@ -1,9 +1,11 @@
 ﻿using SitefinityWebApp.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Telerik.Sitefinity.Security;
+using Telerik.Sitefinity.Security.Model;
 
 namespace SitefinityWebApp.Mvc.Controllers
 {
@@ -35,6 +37,7 @@ namespace SitefinityWebApp.Mvc.Controllers
 
             if (userService.ValidateUser(wrap_name, wrap_password))
             {
+                Session["wsauth.username"] = wrap_name;
                 Session["wsauth.authState"] = 1;
                 Session["wsauth.realm"] = realm;
                 Session["wsauth.redirect_uri"] = redirect_uri;
@@ -98,7 +101,21 @@ namespace SitefinityWebApp.Mvc.Controllers
 
             if (isValid)
             {
-                return Redirect(GetLoginUri());
+                var userManager = UserManager.GetManager();
+                var user = userManager.GetUserByEmail(Session["wsauth.username"].ToString());
+                if (user.IsBackendUser && user.IsLoggedIn)
+                {
+                    SystemManager.RunWithElevatedPrivilege(_ =>
+                    {
+                        SecurityManager.Logout("", user.Id);
+                    });
+                }
+
+                var endpoint = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
+                var hostUrl = endpoint.Replace(System.Web.HttpContext.Current.Request.Url.AbsolutePath, "");
+                SecurityManager.SkipAuthenticationAndLogin("", Session["username"].ToString(), true, $"{hostUrl}/Sitefinity", $"{hostUrl}/401");
+                return null;
+                //return Redirect(GetLoginUri());
             }
             else
             {

@@ -107,7 +107,12 @@ namespace SitefinityWebApp.Mvc.Controllers
                 {
                     SystemManager.RunWithElevatedPrivilege(_ =>
                     {
-                        SecurityManager.Logout("", user.Id);
+                        // SecurityManager.Logout("", user.Id);
+                        var userActivityManager = ManagerBase.GetManager("Telerik.Sitefinity.Security.UserActivityManager");
+                        var userActivityProvider = userActivityManager.Provider as UserActivityProvider;
+                        var userActivity = userActivityProvider.GetUserActivity(user.Id, user.ProviderName);
+                        userActivity.IsLoggedIn = false;
+                        userActivityManager.SaveChanges();
                     });
                 }
 
